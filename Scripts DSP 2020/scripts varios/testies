@@ -1,0 +1,247 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.stats as stats
+import math
+import heapq
+# mu = 3
+# variance = 2
+# sigma = math.sqrt(variance)
+# x = np.linspace(mu - 3*sigma, mu + 3*sigma, 100)
+# plt.plot(x, stats.norm.pdf(x, mu, sigma))
+# plt.show()
+# cumsum=np.cumsum(data2)
+# M=2
+# sum1=cumsum[M:]
+# sum2=cumsum[:-M]
+# salida = sum1 - sum2
+# print('sum1: ',sum1)
+# print('sum2: ',sum2)
+# print('salida es: ',salida)
+
+# def mediamovild(data, N):
+#     cumsum = np.cumsum(np.insert(data, 0, 0))
+#     salida=(cumsum[N:] - cumsum[:-N]) / float(N)
+#     sum1=cumsum[N:]
+#     sum2=cumsum[:-N]
+#     return cumsum, salida, sum1, sum2
+#
+# cumsum, mmd, sum1, sum2=mediamovild(data,10)
+# print('data: ', data)
+# print('salida:',mmd)
+# mmd1=np.cumsum(data)
+# print('cumsum sin insert:',mmd1)
+# print('cumsum con insert: ', cumsum)
+# print('sum1: ',sum1)
+# print('sum2: ',sum2)
+#
+
+# print('asd: ',data2[-2:])
+# def mediamovild(x,M,defas):
+#     cumsum = np.cumsum(np.insert(x,M,defas))
+#     salida = (cumsum[M:]- cumsum[:-M)/float(M)
+# 1,2,3,4   -
+#             m hasta el fin
+#     # salida[i]=np.cumsum(M)
+#     return salida
+#     # return cumsum / float(M)
+# mmd=mediamovild(data,3,5)
+#
+# print("La media movil es: ",mmd)
+#
+#
+# y[n]=sumatoria(- inf a + inf){h[n]*x[n-k]}
+# y[n]=sumatoria{(1/M+1*sumatoria(0 a M){delta})*x[n-k]}
+#
+# -(M-1)/2:     M:    (M-1)/2
+# extremoinf  centro extremosup
+# [1,1,1,1,1]
+#
+# [1+0)/M*(x[n-k]),1+0+1)/M,1+0+1+2)/M,...]
+
+
+# a = np.array([[1, 1], [2, 2], [3, 3]])
+# a
+# array([[1, 1],
+#        [2, 2],
+#        [3, 3]])
+# >>> np.insert(a, 1, 5)
+# array([1, 5, 1, 2, 2, 3, 3])
+# >>> np.insert(a, 1, 5, axis=1)
+# array([[1, 5, 1],
+#        [2, 5, 2],
+#        [3, 5, 3]])
+"desde aca esta la jugada de ayer"
+# for i in range(len(x)):
+#
+#     y[i]=np.float(x[i])
+#
+#
+# def mediamovild(x,M):
+#     cumsum=np.cumsum(x)
+#     aux=cumsum[:M]
+#
+#     for i in range(len(x)):
+#
+#         y[i]=(1/(M+1))*aux[i]
+#
+#     return y,cumsum,aux
+#
+# y,cumsum,aux=mediamovild(data,5)
+#
+# print('cumsum', cumsum)
+# print('aux', aux)
+# print('res:', y)
+
+"aca ya no"
+
+# for i in range(len(x)):
+#
+#     y[i]=np.float(x[i])
+
+# for i in range(0, len(data2)):
+#
+#     data2[i] = int(data2[i])
+#
+# data2=np.array(data2)
+#
+# def mediamovild(x,M):
+#
+#     for i in range(len(x)):
+#
+#         y=np.zeros(len(x))
+#
+#         for j in range(M):
+#
+#             y[i]=y[i]+x[i+j]
+#
+#     y=(1/(M+1))*y
+#
+#     return y
+#
+# y=mediamovild(data,3)
+#
+# print('res:', y)
+
+# caca=range(0,3)
+# caca=np.array(caca)
+# print("caca : ", caca)
+
+# data = np.ones(1000)
+#
+# # F = 10000
+# #
+# # T = 1/F
+# #
+# # Fs = 44100
+# #
+# # Ts = 1/Fs
+# #
+# # t = np.arange(0,0.5*T,Ts)
+# #
+# # señal = 2 + np.sin(2*np.pi*F*t)
+# #
+# # f = np.logspace(0,Fs,50)
+# #
+# # señalfft = np.real(np.fft.fft(señal))
+# #
+# # print("fft: ",señalfft)
+# #
+# # plt.plot(f,señalfft)
+# #
+# # plt.show()
+# # ------------
+#
+def mediamovild(x,M):
+    y=np.zeros(len(x))
+    for i in range(0,len(x)):
+        x=np.insert(x,len(x),0)
+        for j in range(0,M+1):
+            y[i]=y[i]+x[i+j]
+        y[i]=y[i]*(1/(M+1))
+    return y
+
+def mediamovildr(x,M):
+    y=np.zeros(len(x))
+    y[0]=(1/(M+1))*np.sum(x[:M+1])
+    for i in range(1,len(x)):
+        x=np.insert(x,len(x),0)
+        y[i]=y[i-1]+(1/(M+1))*x[i+M]-(1/(M+1))*x[i-1]
+    return y
+
+# fs = 44100
+# t = 0.5
+# n=np.arange(0,t,1/fs) #vector de muestras
+# N = len(n)
+# x=np.sin(2*np.pi*10000*n) #defino funcion sen(2pi*f*t)
+# y=np.fft.fft(x) #calculo de la dft
+# y2=abs(y) #tomo el modulo
+# f = np.fft.fftfreq(len(y2),1/fs)
+# # print((fs/2)/int(N/2))
+# # print(N)
+# # plt.figure(1)
+# # plt.plot(f,y2)
+# # plt.show()
+#
+# finder=np.char.find(y2,10000)
+#
+# print("pistas de blue: ",finder)
+#
+# xfd=mediamovild(x,1)
+# vecturro=np.arange(0,len(xfd),1)
+# plt.figure(1)
+# plt.plot(vecturro,xfd)
+# plt.show()
+
+# #
+# # print("La media movil es: ", xfd)
+# #
+# # print('x: ', x)
+# #
+# # def mediamovildr(x,M):
+# #     y=np.zeros(len(x))
+# #     y[0]=(1/(M+1))*np.sum(x[:M+1])
+# #     for i in range(1,len(x)):
+# #         x=np.insert(x,len(x),0)
+# #         y[i]=y[i-1]+(1/(M+1))*x[i+M]-(1/(M+1))*x[i-1]
+# #     return y
+# # xfr=mediamovildr(data,50)
+# #
+# # print("mmd recursiva: ", xfr)
+
+
+fs = 44100
+t = 0.5
+n=np.arange(0,t,1/fs) #vector de muestras
+N = len(n)
+x=2 + np.sin(2*np.pi*10000*n) #defino funcion sen(2pi*f*t)
+X=np.fft.fft(x) #calculo de la dft
+Xr=np.fft.rfft(x)
+Xmax=max(X)
+
+# cont=0
+# while X>=10000:
+#     cont=cont+1
+#     maximos[cont]=X[cont]
+X1=abs(Xr) #tomo el modulo
+w0=10000*np.pi/22050
+M=2
+w=np.arange(-1*np.pi,np.pi,2*np.pi/22050)
+
+H=(1/(M+1))*((np.sin(w*(M+1)/2))/(np.sin(w/2)))
+H1=abs(H)
+#y=X1*H1
+#y2=abs(np.fft.ifft(y))
+xfd=mediamovildr(x,M)
+FFT=abs(np.fft.fft(xfd))
+tuco2=heapq.nlargest(5,FFT)
+print(tuco2)
+print(len(xfd))
+f = np.arange(0,fs/2,(fs/2)/int(N/2))
+#f = np.arange(0,fs/2,2/22050)
+#f = np.fft.fftfreq(len(FFT),1/fs)
+plt.figure(1)
+#plt.plot(f,y2[0:int(N/2)])
+#plt.plot(f,FFT[0:int(N/2)])
+plt.plot(f,FFT[0:int(N/2)])
+#plt.axis([-1*np.pi,np.pi,0,1.2])
+plt.show()

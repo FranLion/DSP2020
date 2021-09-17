@@ -1,0 +1,62 @@
+# import xlsxwriter
+from FuncionesTP import *
+'''En este inciso se generan señales a partir de ir añadiendo un ruido a la señal original del Item1
+'''
+# Se generan las 10 señales de ruido aleatorio con media 0 y sigma 3
+z31 =  np.random.normal(0, 3, len(data))
+z32 = np.random.normal(0, 3, len(data))
+z33 = np.random.normal(0, 3, len(data))
+z34 = np.random.normal(0, 3, len(data))
+z35 = np.random.normal(0, 3, len(data))
+z36 = np.random.normal(0, 3, len(data))
+z37 = np.random.normal(0, 3, len(data))
+z38 = np.random.normal(0, 3, len(data))
+z39 = np.random.normal(0, 3, len(data))
+z310 = np.random.normal(0, 3, len(data))
+
+# Genero cada señal sumando la señal de entrada y un ruido
+x31 = data + z31
+x32 = data + z32
+x33 = data + z33
+x34 = data + z34
+x35 = data + z35
+x36 = data + z36
+x37 = data + z37
+x38 = data + z38
+x39 = data + z39
+x310 = data + z310
+
+# Saco una señal de ruido promedio de las 10 señales de ruido generadas (solo ruido)
+ruidoProm1=(1/10)*(z31+z32+z33+z34+z35+z36+z37+z38+z39+z310)
+
+#Promedio de las señales con ruido agregado
+prom2=(1/10)*(x31+x32+x33+x34+x35+x36+x37+x38+x39+x310)
+sigmanoise=desvioestandar(ruidoProm1,lamedia(ruidoProm1))#Saco el sigma de la señal de ruido promedio
+SNRprom=lamedia(prom2)/sigmanoise #Calculo el SNR de esa señal promedio con los valores obtenidos
+print(f"sigma ruido promediado: {sigmanoise}")#Muestro los resultados para compararlos
+print(f"SNR promedio: {SNRprom}")
+print('prom2',prom2)
+print('ruidoprom1',ruidoProm1)
+#Calcula los SNR y los sigmas para las señales con promedio en ensamble.
+SNR10,sigmaruido10=senales_con_ruido(data,0,3,10)
+SNR100,sigmaruido100=senales_con_ruido(data,0,3,100)
+SNR1000,sigmaruido1000=senales_con_ruido(data,0,3,1000)
+
+#Tener cuidado con usar la media aa tambien.
+#
+# workbook = xlsxwriter.Workbook('arrays.xlsx')
+# worksheet = workbook.add_worksheet()
+#
+# array = prom2
+#
+# row0 = 0
+# row1 = 1
+# for col, data in enumerate(array):
+#     worksheet.write_column(row0, col, data)
+#
+# array2 = ruidoProm1
+#
+# for col, data in enumerate(array2):
+#     worksheet.write_column(row1, col, data)
+#
+# workbook.close()

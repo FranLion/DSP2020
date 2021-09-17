@@ -1,0 +1,111 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import heapq
+
+data = np.ones(5)
+
+# mu = 3
+# variance = 2
+# sigma = math.sqrt(variance)
+# x = np.linspace(mu - 3*sigma, mu + 3*sigma, 100)
+# plt.plot(x, stats.norm.pdf(x, mu, sigma))
+# plt.show()
+
+# def mediamovild(x,M,defas):
+#     # for i in range(len(x)):
+#     cumsum = np.cumsum(np.insert(x,M,defas))
+#     salida = (cumsum[M:]- cumsum[:-M])/float(M)
+#     # salida[i]=np.cumsum(M)
+#     return salida
+#     # return cumsum / float(M)
+# mmd=mediamovild(data,3,3)
+
+def mediamovild(x,M):
+    N = len(x)
+    P = np.pad(x, (0, M), 'constant')
+    g = np.zeros(N)
+    for n in range(N):
+        for k in range(M+1):
+            xk = P[n+k]
+            g[n] = g[n] + xk
+    g = g[:-M]
+    h = (1/(M+1))*g
+    return h
+
+# xfd=mediamovild(data,50)
+
+# print("La media movil es: ",xfd)
+
+def mediamovildr(x,M):
+    N = len(x)
+    P = np.pad(x, (0, M), 'constant')
+    g = np.zeros(N)
+    g[0] = sum(x[0,M+1])
+    for n in range(1,N):
+        g[n] = g[n-1]-P[n-1]+P[n+M]
+    g = g[:-M]
+    r = (1/(M+1))*g
+    return r
+
+    #xfr=mediamovildr(data,50)
+#
+# print("mmd recursiva: ", xfr)
+
+# F = 10000
+#
+# T = 1/F
+#
+# Fs = 44100
+#
+# Ts = 1/Fs
+#
+# t = np.arange(0,0.5*T,Ts)
+#
+# señal = 2 + np.sin(2*np.pi*F*t)
+#
+# señalfft = np.fft.fft(señal)
+#
+# print("fft: ",señalfft)
+#
+# plt.plot(t,señalfft)
+#
+# plt.show()
+
+
+fs = 44100
+t = 0.5
+n=np.arange(0,t,1/fs) #vector de muestras
+N = len(n)
+x=2 + np.sin(2*np.pi*10000*n) #defino funcion sen(2pi*f*t)
+X=np.fft.fft(x) #calculo de la dft
+Xr=np.fft.rfft(x)
+Xmax=max(X)
+
+# cont=0
+# while X>=10000:
+#     cont=cont+1
+#     maximos[cont]=X[cont]
+X1=abs(Xr) #tomo el modulo
+w0=10000*np.pi/22050
+M=2
+w=np.arange(-1*np.pi,np.pi,2*np.pi/22050)
+
+H=(1/(M+1))*((np.sin(w*(M+1)/2))/(np.sin(w/2)))
+H1=abs(H)
+#y=X1*H1
+#y2=abs(np.fft.ifft(y))
+xfd=mediamovild(x,M)
+FFT=abs(np.fft.fft(xfd))
+tuco2=heapq.nlargest(5,FFT)
+print(tuco2)
+print(len(xfd))
+f = np.arange(0,fs/2,(fs/2)/int(N/2))
+#f = np.arange(0,fs/2,2/22050)
+#f = np.fft.fftfreq(len(FFT),1/fs)
+plt.figure(1)
+#plt.plot(f,y2[0:int(N/2)])
+#plt.plot(f,FFT[0:int(N/2)])
+plt.plot(f,FFT[0:int(N/2)])
+#plt.axis([-1*np.pi,np.pi,0,1.2])
+plt.show()

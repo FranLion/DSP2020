@@ -1,0 +1,21 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create our figure and data we'll use for plotting
+fig, ax = plt.subplots(figsize=(3, 3))
+
+t = np.arange(0.0, 5.0, 0.01)
+s = np.cos(2*np.pi*t)
+
+# Plot a line and add some simple annotations
+line = plt.plot(t, s)
+
+plt.Axes.annotate('figure pixels',
+            xy=(10, 10), xycoords='figure pixels')
+plt.Axes.annotate('figure points',
+            xy=(80, 80), xycoords='figure points')
+plt.Axes.annotate('figure fraction',
+            xy=(.025, .975), xycoords='figure fraction',
+            horizontalalignment='left', verticalalignment='top',
+            fontsize=20)
+plt.show()

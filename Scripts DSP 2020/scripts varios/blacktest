@@ -1,0 +1,28 @@
+from scipy import signal
+from scipy.fft import fft, fftshift
+import matplotlib.pyplot as plt
+import numpy as np
+from FuncionesTP import *
+
+señal,n,fs=senalTP() #Importo la señal sinusoidal definida en el Item 1.
+L=int(0.01*len(señal))
+Largo=len(señal)
+ventana = signal.blackman(L)
+# plt.plot(ventana)
+# plt.title("Ventana Blackman")
+# plt.ylabel("Amplitud")
+# plt.xlabel("muestra")
+
+# plt.figure()
+
+resp = fft(ventana, 44100) / (len(ventana)/2.0)
+# resp = fft(ventana, 44100)
+freq = np.linspace(-np.pi, np.pi, len(resp))
+respN = np.abs(fftshift(resp / abs(resp).max()))
+respNdB = 20 * np.log10(np.maximum(respN, 1e-10))
+plt.plot(freq, respNdB, '#f24738')
+plt.axis([-np.pi, np.pi, -120, 0])
+plt.title("Respuesta en frecuencia de la ventana")
+plt.ylabel("[dB]")
+plt.xlabel("Frecuencia normalizada [ciclos por cada muestra]")
+plt.show()

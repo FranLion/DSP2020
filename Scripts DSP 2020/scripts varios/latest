@@ -1,0 +1,66 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# F = 10000
+#
+# T = 1/F
+#
+# Fs = 44100
+#
+# Ts = 1/Fs
+#
+# t = np.arange(0,5*T,Ts)
+#
+# señal = 2 + np.sin(2*np.pi*F*t)
+#
+# plt.plot(t, señal)
+#
+# plt.xlabel('tiempo (s)')
+#
+# plt.ylabel('amplitud relativa (frankitos)')
+#
+# plt.show()
+
+# # def lamedia():
+# lamediasin=np.sum(señal)/len(señal)
+#
+# # def desviomedio():
+# desviomediosin=np.sum(abs(señal-lamediasin))/len(señal)
+#
+# # def desvioestandar():
+# desvioestandarsin=(np.sum(abs(señal-lamediasin)**2)/len(señal)-1)**1/2
+
+print("Las señales random: ")
+
+print ("\n")
+
+# Señalrandom2 = np.random.randn(10,2).view(np.complex128)
+#
+# Señalrandom3 = np.random.randn(100,2).view(np.complex128)
+#
+# Señalrandom4 = np.random.randn(1000,2).view(np.complex128)
+#
+# Señalrandom5 = np.random.randn(10000,2).view(np.complex128)
+#
+# Señalrandom6 = np.random.randn(100000,2).view(np.complex128)
+#
+
+Señalrandom1 = np.random.randn(10000)
+# .view(np.complex128)
+print("La señal generada 1 es: ",Señalrandom1)
+
+x=np.arange(0,len(Señalrandom1))
+
+plt.plot(x, Señalrandom1)
+
+plt.show()
+
+# print("La señal generada 2 es: ",Señalrandom2)
+#
+# print("La señal generada 3 es: ",Señalrandom3)
+#
+# print("La señal generada 4 es: ",Señalrandom4)
+#
+# print("La señal generada 5 es: ",Señalrandom5)
+#
+# print("La señal generada 6 es: ",Señalrandom6)
