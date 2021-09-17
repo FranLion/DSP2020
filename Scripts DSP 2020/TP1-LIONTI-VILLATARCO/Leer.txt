@@ -1,0 +1,6 @@
+Trabajo Practico N°1: Programación Básica.
+Alumnos: Franco Lionti - Gustavo Villatarco
+
+El programa puede ejecutarse de dos maneras diferentes. Una forma es a partir de Python (Menu.py) y la otra a partir de un ejecutable de Windows (Menu.exe). Cada forma de ejecución tiene su propio almacenamiento.
+En la carpeta \Python se encuentran los archivos .py que contienen los scripts desarrollados y los archivos que se escriben según la consigna 8 (.wav) para esta forma de ejecutar.
+Por otro lado, de manera lúdica se incluye la posibilidad de ejecutar desde el SO Windows y todos los archivos pertinentes se incluyen en la carpeta \Exe\dist
