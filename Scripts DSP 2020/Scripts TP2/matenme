@@ -1,0 +1,118 @@
+from Funcionestp2 import *
+
+eps=0.002
+
+fs=98000
+
+T=1/fs
+
+n_samples=fs*2
+
+pa=1/2
+
+f1=700
+
+# p1=fs/f1
+p1=int(fs/f1)
+
+N= int(np.floor(p1 -pa-eps))
+
+pc=p1-N-pa
+
+C=(np.sin(2*np.pi*f1*T)-np.sin(2*np.pi*f1*T*pc))/(np.sin((2*np.pi*f1*T*pc)+(2*np.pi*f1*T)))
+
+S=0.8
+
+def karplus_strongestirado(n_samples, prob , wavetable_size):
+
+    "Desde la tabla de onda anterior usando una distribucion binomial se genera un nuevo promedio."
+    samples = []
+    current_sample = 0
+    previous_value = 0
+    # wavetable_size = fs // p
+
+    # conseguir la aleatoriedad de nivel dos
+    wavetable = (2 * np.random.randint(0, 2, wavetable_size) - 1).astype(np.float)
+
+    if prob ==1:
+
+        while len(samples) < n_samples:
+
+            #aca hago el karplus strong y los guardo en wavetable
+            wavetable[current_sample] = S+(1-S)*(0.5)*(wavetable[current_sample] + previous_value)
+
+            #aca le agrego a samples lo muestra i que estoy bucleando
+            samples.append(wavetable[current_sample])
+
+            #aca le digo al bucle que lea siempre la ultima muestra del vector que me importa
+            previous_value = samples[-1]
+
+            #acumulador
+            current_sample += 1
+
+            #Resto de la division entre el vector wavetable y el sample que estoy bucleando
+            current_sample = current_sample % wavetable.size
+
+    else:
+
+        while len(samples) < n_samples:
+
+            #Utilizo binomial
+            r = np.random.binomial(1, prob)
+            sign = float(r == 1) * 2 - 1
+            wavetable[current_sample] = sign * 0.5 * (wavetable[current_sample] + previous_value)
+            samples.append(wavetable[current_sample])
+            previous_value = samples[-1]
+            current_sample += 1
+            current_sample = current_sample % wavetable.size
+
+    return np.array(samples)
+
+
+def delay1a(senal,a1):
+    zpad=np.zeros(1)
+    delay=np.append(zpad,senal)
+    x=np.append(senal,zpad)
+    y=a1*x+(1-a1)*delay
+    return y
+
+def IIRdelbueno(senal,a,N):
+    delayline=np.zeros(N)
+    x=np.append(senal,delayline)
+    y=np.zeros_like(x)
+    for i in range(len(x)):
+        y[i]=(1-a)*x[i]+a*delayline[N-1]
+        delayline=np.append(y[i],delayline[0:N-1])
+    return y
+
+
+L0=100
+RL0=np.exp(-np.pi*L0*T)
+cuerda=karplus_strong(n_samples,1,p1)
+y0=IIRdelbueno(cuerda,RL0,1)
+z1=delay1a(y0,C)
+
+# k2,y2,delayline2=IIR_delay(z2,-C2,1)
+sf.write('otracuerdamas.wav',cuerda,fs)
+sf.write('santoshcsbatman.wav',z1,fs)
+
+fftz1=np.fft.fft(z1)
+fdB=20*np.log10(abs(fftz1))
+fase=np.angle(fftz1)
+
+plt.plot(z1)
+plt.show()
+
+# plt.subplot(2,1,1)
+# plt.plot(y1,'#738EB6')
+# plt.title('Señal generada por la cuerda')
+# plt.grid('both')
+# plt.ylabel('Amplitud relativa [n]')
+# plt.xlabel('Número de muestra [n]')
+# plt.subplot(2,1,2)
+# plt.plot(y2,'#BF76D2')
+# plt.title('Señal generada por la cuerda 2')
+# plt.grid('both')
+# plt.ylabel('Amplitud relativa [n]')
+# plt.xlabel('Número de muestra [n]')
+# plt.subplots_adjust(hspace = 1.2)

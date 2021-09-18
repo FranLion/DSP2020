@@ -1,0 +1,300 @@
+from Funcionestp2 import *
+
+m69,fs=sf.read('Midi69.wav')# Se importa una señal de audio
+t=[100,800] #Duración del retardo en ms
+a=[-0.5,0.707] #Valores de atenuación alfa
+y1=delays(m69,t[0],fs,a[1],4)#Se aplican 4 ecos por cada tiempo de retardo
+y2=delays(m69,t[1],fs,a[0],4)
+
+H69=20*np.log10(abs(np.fft.fft(m69)))
+H1=20*np.log10(abs(np.fft.fft(y1)))
+H2=20*np.log10(abs(np.fft.fft(y2)))
+f69=np.arange(0,fs/2,(fs/2)/int(len(H69)/2))
+f1=np.arange(0,fs/2,(fs/2)/int(len(H1)/2))
+f2=np.arange(0,fs/2,(fs/2)/int(len(H2)/2))
+
+''' Ecos Finitos'''
+#
+# sf.write('EcosFinitos(800 ms).wav',y2,fs)
+# sp1=plt.figure('Ecos Finitos')
+# plt.subplot(3,1,1)
+# plt.plot(m69[:125000],'#0392cf')
+# plt.title('Señal de entrada')
+# plt.grid('both')
+# plt.ylabel('x [n]')
+# plt.xlabel('Número de muestra [n]')
+# plt.axis([0,len(y2),-0.3,0.3])
+# plt.subplot(3,1,2)
+# plt.plot(y1[:125000],'#7bc043')
+# plt.title('Señal con 4 ecos(100 ms)')
+# plt.grid('both')
+# plt.ylabel('y [n]')
+# plt.xlabel('Número de muestra [n]')
+# plt.axis([0,len(y2),-0.3,0.3])
+# plt.subplot(3,1,3)
+# plt.plot(y2[:125000],'#f37736')
+# plt.title('Señal con 4 ecos(800)')
+# plt.grid('both')
+# plt.ylabel('y [n]')
+# plt.xlabel('Número de muestra [n]')
+# plt.axis([0,len(y2),-0.3,0.3])
+# plt.subplots_adjust(hspace = 1.4)
+# plt.show()
+#
+# sp1=plt.figure('Ecos Finitos')
+# plt.subplot(3,1,1)
+# plt.plot(f69[:int(len(H69)/6)],H69[:int(len(H69)/6)],'#0392cf')
+# plt.title('Señal de entrada')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplot(3,1,2)
+# plt.plot(f1[:int(len(H1)/6)],H1[:int(len(H1)/6)],'#7bc043')
+# plt.title('Señal con 4 ecos(100 ms)')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplot(3,1,3)
+# plt.plot(f2[:int(len(H2)/6)],H2[:int(len(H2)/6)],'#f37736')
+# plt.title('Señal con 4 ecos(800)')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplots_adjust(hspace = 1.4)
+# plt.show()
+#
+
+
+#
+#
+# '''Ecos Infinitos'''
+#
+# yinf1=IIR_delay(m69,a[1],15,fs)
+# yinf2=IIR_delay(m69,0.5,t[0],fs)
+# sf.write('EcosInfinitos(15 ms).wav',yinf1,fs)
+#
+# fft1=np.fft.fft(yinf1)
+# fft2=np.fft.fft(yinf2)
+# angle1=np.angle(fft1)
+# angle2=np.angle(fft2)
+# f1=np.arange(0,fs/2,(fs/2)/int(len(fft1)))
+# f2=np.arange(0,fs/2,(fs/2)/int(len(fft2)))
+# # f2=np.arange(0,fs/2,(fs/2)/int(len(H2)/2))
+# sp1=plt.figure('Ecos Infinitos')
+# # plt.subplot(3,1,1)
+# # plt.plot(m69,'#738EB6')
+# # plt.title('Señal de entrada')
+# # plt.grid('both')
+# # plt.ylabel('x [n]')
+# # plt.xlabel('Número de muestra [n]')
+# # # plt.axis([0,len(fft1)0])
+# plt.subplot(2,1,1)
+# plt.plot(f1[0:100],angle1[0:100],'#3CB371')
+# plt.title('Señal con infinitos ecos (15 ms)')
+# plt.grid('both')
+# plt.ylabel('y [n]')
+# plt.xlabel('Frecuencia [Hz]')
+# # plt.axis(f1)
+# plt.subplot(2,1,2)
+# plt.plot(f2[0:100],angle2[0:100],'#4169E1')
+# plt.title('Señal con infinitos ecos (100 ms)')
+# plt.grid('both')
+# plt.ylabel('y [n]')
+# plt.xlabel('Frecuencia [Hz]')
+# # plt.axis(f2)
+# plt.subplots_adjust(hspace = 1.4)
+# plt.show()
+
+'''Implementación del algoritmo original de Karplus-Strong'''
+
+fs=44100
+T=1/fs
+f1=220 #Frecuencia fundamental
+Pa=1/2 #Pa(f1)
+eps=0.001 #epsilon
+P1=fs/f1
+N= int(np.floor(P1-Pa-eps)) #N
+n_samples=fs*2
+# pc=p1-N-pa
+# C=(1-pc)/(1+pc)
+
+
+cuerda=karplus_strong(n_samples, 1 , N)# Cuerda sintetizada
+drum=karplus_strong(n_samples, 0.707 , N)# Drum sintetizado
+Hcuerda=np.fft.fft(cuerda)
+Hdrum=np.fft.fft(drum)
+print(len(cuerda),len(Hdrum))
+freq = np.arange(0,fs/2,(fs/2)/int(len(cuerda)/2))
+
+# print(len(freq))
+# # freq=np.arange(0,np.pi,np.pi/fs)
+# # sf.write('Cuerda.wa',cuerda,fs)
+# # sf.write('Drum.wav',drum,fs)
+#
+# sp1=plt.figure(figsize=(10,10))
+#
+# plt.subplot(2,2,1)
+# plt.plot(freq,20*np.log10(abs(Hcuerda[:int(len(cuerda)/2)])),'#738EB6')
+# plt.title('Cuerda Sintetizada')
+# plt.grid('both')
+# plt.ylabel('|H(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplot(2,2,2)
+# plt.plot(freq,20*np.log10(abs(Hdrum[:int(len(drum)/2)])),'#738EB6')
+# plt.title('Drum Sintetizado')
+# plt.grid('both')
+# plt.ylabel('|H(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplot(2,2,3)
+# plt.plot(cuerda[:1000],'#738EB6')
+# plt.title('Cuerda Sintetizada')
+# plt.grid('both')
+# plt.ylabel('|H(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplot(2,2,4)
+# plt.plot(drum[:1000],'#738EB6')
+# plt.title('Drum Sintetizado')
+# plt.grid('both')
+# plt.ylabel('|H(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplots_adjust(hspace = 1)
+# plt.subplots_adjust(wspace = 0.4)
+# plt.show()
+#
+#
+
+# '''Implementación del algoritmo de Karplus-Strong Modificado (MKS)'''
+# '''Se Implementan 3 características del MKS, denominadas Ha(z), HL(z) y He(z),respectivamente.'''
+#
+# '''Ha(z): Alteración del tiempo de decaimiento'''
+#
+# S1=0.51
+# S2=0.707
+# S3=0.999999
+# ya1=Ha(cuerda,int(P1),S1)
+# ya2=Ha(cuerda,int(P1),S2)
+# ya3=Ha(cuerda,int(P1),S3)
+# Ha1=20*np.log10(abs(np.fft.fft(ya1)))
+# Ha2=20*np.log10(abs(np.fft.fft(ya2)))
+# Ha3=20*np.log10(abs(np.fft.fft(ya3)))
+# sf.write('ya1.wav',ya1,fs)
+# sf.write('ya2.wav',ya2,fs)
+# sf.write('ya3.wav',ya3,fs)
+
+# fft1=abs(np.fft.fft(Ha1))
+# fft2=abs(np.fft.fft(Ha2))
+# fft3=abs(np.fft.fft(Ha3))
+# angle1=np.angle(fft1)
+# angle2=np.angle(fft2)
+# angle3=np.angle(fft3)
+# f1=np.arange(0,fs/2,(fs/2)/int(len(fft1)))
+# f2=np.arange(0,fs/2,(fs/2)/int(len(fft2)))
+# # f2=np.arange(0,fs/2,(fs/2)/int(len(H2)/2))
+#
+# sp1=plt.figure('Ha: Alteración del tiempo de decaimiento')
+# plt.subplot(3,1,1)
+# plt.plot(f1[0:5000],fft1[0:5000],'#ee4035')
+# plt.title('|Ha(jw)| con S=0.51')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplot(3,1,2)
+# plt.plot(f1[0:5000],fft2[0:5000],'#42bdcb')
+# plt.title('|Ha(jw)| con S=0.707')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplot(3,1,3)
+# plt.plot(f1[0:5000],fft3[0:5000],'#72697d')
+# plt.title('|Ha(jw)| con S=0.999')
+# plt.grid('both')
+# plt.ylabel('Amplitud [dB]')
+# plt.xlabel('Frecuencia [Hz]')
+# plt.subplots_adjust(hspace = 1.4)
+# plt.show()
+
+
+#
+# '''HL(z): Simulación de dinámica'''
+# L1=100
+# L2=1000
+# L3=20000
+# yL1=Hd(cuerda,L1,fs)
+# yL2=Hd(cuerda,L2,fs)
+# yL3=Hd(cuerda,L3,fs)
+# HL1=20*np.log10(abs(np.fft.fft(yL1)))
+# HL2=20*np.log10(abs(np.fft.fft(yL2)))
+# HL3=20*np.log10(abs(np.fft.fft(yL3)))
+# # sf.write('yL1.wav',yL1,fs)
+# # sf.write('yL2.wav',yL2,fs)
+# # sf.write('yL3.wav',yL3,fs)
+#
+# sp1=plt.figure('HL(jw): Simulación de dinámica')
+# plt.subplot(3,1,1)
+# plt.plot(HL1[:int(len(HL1)/8)],'#738EB6')
+# plt.title('HL(jw) con L=100 Hz')
+# plt.grid('both')
+# plt.ylabel('|HL1(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplot(3,1,2)
+# plt.plot(HL2[:int(len(HL2)/8)],'#738EB6')
+# plt.title('HL(jw) con L=1000 Hz')
+# plt.grid('both')
+# plt.ylabel('|HL2(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplot(3,1,3)
+# plt.plot(HL3[:int(len(HL3)/8)],'#738EB6')
+# plt.title('HL(jw) con L=20000 Hz')
+# plt.grid('both')
+# plt.ylabel('|HL3(jw)| [dB]')
+# plt.xlabel('w [rad/muestra]')
+# plt.subplots_adjust(hspace = 1.4)
+# plt.show()
+#
+#
+'''He(z): Simulación de posición de púa'''
+
+mu1=1/100
+mu2=0.5
+mu3=0.707
+mu4=1/N
+ye1=He(cuerda,mu1,N)
+ye2=He(cuerda,mu2,N)
+ye3=He(cuerda,mu3,N)
+ye4=He(cuerda,mu4,N)
+He1=20*np.log10(abs(np.fft.fft(ye1)))
+He2=20*np.log10(abs(np.fft.fft(ye2)))
+He3=20*np.log10(abs(np.fft.fft(ye3)))
+sf.write('ye1.wav',ye1,fs)
+sf.write('ye2.wav',ye2,fs)
+sf.write('ye3.wav',ye4,fs)
+
+fft1=abs(np.fft.fft(He1))
+fft2=abs(np.fft.fft(He2))
+fft3=abs(np.fft.fft(He3))
+angle1=np.angle(fft1)
+angle2=np.angle(fft2)
+angle3=np.angle(fft3)
+f1=np.arange(0,fs/2,(fs/2)/int(len(fft1)))
+
+sp1=plt.figure('He(jw): Pick Position')
+plt.subplot(3,1,1)
+plt.plot(f1[0:4000],fft1[0:4000],'#397fa2')
+plt.title('He(jw) con μ=0.001')
+plt.grid('both')
+plt.ylabel('Amplitud [dB]')
+plt.xlabel('Frecuencia [Hz]')
+plt.subplot(3,1,2)
+plt.plot(f1[0:4000],fft2[0:4000],'#99488b')
+plt.title('He(jw) con μ=0.5')
+plt.grid('both')
+plt.ylabel('Amplitud [dB]')
+plt.xlabel('Frecuencia [Hz]')
+plt.subplot(3,1,3)
+plt.plot(f1[0:4000],fft2[0:4000],'#c343fd')
+plt.title('He(jw) con μ=1/N')
+plt.grid('both')
+plt.ylabel('Amplitud [dB]')
+plt.xlabel('Frecuencia [Hz]')
+plt.subplots_adjust(hspace = 1.4)
+plt.show()

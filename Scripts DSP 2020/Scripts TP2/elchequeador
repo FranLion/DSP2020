@@ -1,0 +1,18 @@
+import numpy as np
+from scipy import signal
+import sympy
+from sympy.solvers import solve
+import matplotlib.pyplot as plt
+from plot_zplane import zplane
+Fs=20000
+fc=3000
+G=18
+wc=3*2/20#pi
+a=(np.tan(2*np.pi*fc/Fs)-1)/(np.tan(2*np.pi*fc/Fs)+1)
+print(wc,a)
+b0=(19+(a*G))
+b1=((19*a)+G)
+num=np.array([b0,b1])
+den=np.array([1,a])
+print(b1,b0,-b1/b0)
+zplane(num,den)

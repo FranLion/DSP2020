@@ -1,0 +1,30 @@
+import soundfile as sf
+import matplotlib.pyplot as plt
+import numpy as np
+
+[data,fs] = sf.read('Cosas/Midi69.wav')
+
+# alfa=1/2
+#
+# D=4
+# F=fs
+
+duracion=0.1 #segundos
+#
+# D=int(round(duracion*Fs))
+#
+# zpad=np.zeros(D)
+#
+# delay=np.append(zpad,data)
+#
+# x=np.append(data,zpad)
+
+yn=data+(1/2)*data[4:]+((1/2)**2)*data[2*4:]+((1/2)**3)*data[3*4:]+((1/2)**4)*data[4*4:]
+
+# f=np.arange(len(data),1/F)
+# 
+# a=plt.plot(yn)
+# plt.show()
+
+
+# print("",f)
